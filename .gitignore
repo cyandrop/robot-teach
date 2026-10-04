@@ -3,3 +3,5 @@ __pycache__/
 demo_log.txt
 .venv/
 .DS_Store
+# 本地便利脚本（含本机路径，不进仓库）
+推送更新.bat
