@@ -10,17 +10,17 @@
 
 ## 效果一览
 
-![演示：自然语言指令 → 视觉识别 → 抓取放置](results/demo.gif)
+![演示：自然语言指令 → 视觉识别 → 抓取放置](https://cdn.jsdelivr.net/gh/cyandrop/robot-teach@main/results/demo.gif)
 
 *动图｜左：PyBullet 3D 仿真视角；右：仿真相机视角（带识别标记）。连续执行三条中文指令，三次搬运全部成功。*
 
-![系统架构](results/架构图.png)
+![系统架构](https://cdn.jsdelivr.net/gh/cyandrop/robot-teach@main/results/%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
 
 *图 1｜系统链路：自然语言指令 → 指令解析 → 视觉识别 → 逆运动学求解 → 仿真执行，底部是统一配置层*
 
 | 视觉识别（5 个目标全中） | 抓取前（感知 + 识别标记） | 抓取后（已放进黄色区域） |
 | --- | --- | --- |
-| ![视觉识别](results/vision_check.png) | ![抓取前](results/smoke_before.png) | ![抓取后](results/smoke_after.png) |
+| ![视觉识别](https://cdn.jsdelivr.net/gh/cyandrop/robot-teach@main/results/vision_check.png) | ![抓取前](https://cdn.jsdelivr.net/gh/cyandrop/robot-teach@main/results/smoke_before.png) | ![抓取后](https://cdn.jsdelivr.net/gh/cyandrop/robot-teach@main/results/smoke_after.png) |
 
 | 指标 | 实测值 |
 | --- | --- |
