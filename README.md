@@ -3,7 +3,16 @@
 > 一台电脑、零硬件成本，用自然语言指挥虚拟机械臂完成「识别 → 抓取 → 搬运 → 放置」。
 > 面向高校机器人/人工智能教学场景，解决实体机械臂昂贵、易损、难以普及的痛点。
 
+**5 分钟跑起来**：双击 `setup_env_无需预装conda.bat`（电脑上没装 conda 也行）→ `python smoke.py`
+｜ **验证数据**：[`results/效果验证报告.md`](results/效果验证报告.md)
+｜ **演示**：[`results/demo.gif`](results/demo.gif) ／ [`results/demo_h264.mp4`](results/demo_h264.mp4)
+｜ **协议**：MIT
+
 ## 效果一览
+
+![演示：自然语言指令 → 视觉识别 → 抓取放置](results/demo.gif)
+
+*动图｜左：PyBullet 3D 仿真视角；右：仿真相机视角（带识别标记）。连续执行三条中文指令，三次搬运全部成功。*
 
 ![系统架构](results/架构图.png)
 
@@ -20,8 +29,7 @@
 | 连续 30 次稳定性（每轮扰动 ±30 mm） | **100.0%**（30/30），连带扰动 **0 次** |
 | 指令解析准确率（断网走规则） | **100.0%**（10/10） |
 
-> 完整数据与指标定义见 [`results/效果验证报告.md`](results/效果验证报告.md)，
-> 复现命令见该文末尾。演示视频：`results/demo_h264.mp4`。
+> 完整数据与指标定义见 [`results/效果验证报告.md`](results/效果验证报告.md)，复现命令见该文末尾。
 
 ## 一、这套系统做了什么
 
@@ -41,7 +49,19 @@
 > ⚠️ **重要**：pybullet 官方 PyPI 只提供 Linux 轮子，Windows 用 pip 装会触发 C++ 源码编译，
 > 需要装 Visual Studio 生成工具，很容易卡住。**请用下面的 Conda 方式，已验证有 Windows 预编译包。**
 
-### 方案 A：Conda（推荐，小白必选）
+### 方案 A：一键脚本（最快，**电脑上没装 conda 也能用**）
+
+解压到**没有中文、没有空格的路径**（例如 `D:\robot_teach`），双击：
+
+```bat
+setup_env_无需预装conda.bat
+```
+
+它会自动：找 conda → 没找到就下载安装 Miniforge3（清华镜像）→ 创建环境 `robot`
+（Python 3.11 + pybullet + opencv + numpy）→ 验证依赖 → 自动跑 `smoke.py` 给出验收结论。
+看到 `抓取环节： 成功` 就说明环境好了。
+
+### 方案 A2：已有 conda，手动来
 
 1. 安装 Miniconda（[清华镜像下载](https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/)，
    选 `Miniconda3-latest-Windows-x86_64.exe`，一路下一步）
@@ -159,20 +179,24 @@ python stress_test.py --rounds 30 --perturb 0.03
 
 | 文件 | 作用 |
 |---|---|
+| `setup_env_无需预装conda.bat` | **一键装环境**：没装 conda 也能自动装好并跑验收（推荐） |
 | `config.py` | **所有可调参数**（场景布局、颜色、相机、动作高度）。想改场景只改这里 |
 | `vision.py` | 相机取图、颜色识别、深度反投影、像素↔世界坐标换算 |
 | `arm.py` | 逆运动学移动、限速插值、夹爪开合、抓取/释放、pick-and-place 时序 |
 | `robot_sim.py` | 搭建仿真场景，串联「感知→执行」 |
 | `planner.py` | 指令解析（Qwen API + 规则兜底） |
 | `main.py` | 程序入口（图形界面 / 命令行 / 自动演示） |
+| `smoke.py` | 五关冒烟测试：改完代码先跑这个 |
 | `evaluate.py` | 精度测试：识别误差、放置偏差，输出 `results/metrics.csv` |
 | `stress_test.py` | 稳定性测试：连续多轮任务成功率、连带扰动、卡死检测，输出 `results/stress.csv` |
-| `tools/` | 标定工具：`calibrate_grasp.py` 抓握高度、`measure_gripper.py` 夹爪几何、<br>`pick_park_pose.py` 停靠位姿、`sample_colors.py` 采样实际颜色、`trace_task.py` 单任务追踪、<br>`check_gui.py` GUI 模式自检 |
+| `tools/` | 标定工具：`calibrate_grasp.py` 抓握高度、`measure_gripper.py` 夹爪几何、<br>`pick_park_pose.py` 停靠位姿、`sample_colors.py` 采样实际颜色、`trace_task.py` 单任务追踪、<br>`check_vision.py` 五目标自检、`tune_hsv.py` 真实场景调阈值、`record_demo.py` 录演示视频 |
 | `survey/` | 需求调研工具包：问卷 + 一键分析与出图（补「需求分析」「应用效果」两项） |
+| `results/` | 实测数据、证据图与演示视频：`metrics.csv`、`stress.csv`、`demo.gif`、`demo_h264.mp4`、各截图 |
+| `handoff/` | 三人协作与交接记录（分工、接口约定、评审对照、环境说明），见 [handoff/README.md](handoff/README.md) |
 | `results/效果验证报告.md` | **可直接粘贴进参赛方案的验证章节** |
 | `演示脚本.md` | 录演示视频的分镜与口播要点 |
 
-## 六、录演示视频的脚本（约 2 分钟）
+## 附：录演示视频的脚本（约 2 分钟）
 
 1. `python main.py --cam --demo --realtime` 开启相机窗口、真实速度与自动演示
 2. 用 OBS 或 Windows 自带录屏（Win+G）录制整个屏幕
